@@ -43,12 +43,12 @@ func readFileToArray(path string) ([]int, error) {
 // Given an input array, find the product of the two values
 // within that sum to 2020
 func part1(input []int) int {
+	// for each subsequent iteration, you only need to look at a subset of the
+	// array, as the previous bits have already been compared
 	for i, v := range input {
-		for j, w := range input {
-			if i != j {
-				if v+w == 2020 {
-					return v * w
-				}
+		for _, w := range input[i+1:] {
+			if v+w == 2020 {
+				return v * w
 			}
 		}
 	}
@@ -58,13 +58,13 @@ func part1(input []int) int {
 // Given an input array, find the product of the three values
 // within that sum to 2020
 func part2(input []int) int {
+	// for each subsequent iteration, you only need to look at a subset of the
+	// array, as the previous bits have already been compared
 	for i, v := range input {
-		for j, w := range input {
-			for k, y := range input {
-				if i != j && j != k {
-					if v+w+y == 2020 {
-						return v * w * y
-					}
+		for j, w := range input[i+1:] {
+			for _, y := range input[i+j+1:] {
+				if v+w+y == 2020 {
+					return v * w * y
 				}
 			}
 		}
