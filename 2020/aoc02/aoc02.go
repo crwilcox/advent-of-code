@@ -11,6 +11,13 @@ import (
 	"strings"
 )
 
+type PasswordEntry struct {
+	Minimum   int
+	Maximum   int
+	Character string
+	Password  string
+}
+
 func readFileToArray(path string) ([]string, error) {
 	rootDir, err := os.Getwd()
 	if err != nil {
@@ -37,24 +44,29 @@ func readFileToArray(path string) ([]string, error) {
 	return lines, nil
 }
 
+func parseLine(line string) PasswordEntry {
+	r := regexp.MustCompile(`(?P<Min>\d+)-(?P<Max>\d+) (?P<Char>.): (?P<Password>.+)`)
+	matches := r.FindStringSubmatch(line)
+	minimum, err := strconv.Atoi(matches[1])
+	if err != nil {
+		panic(err)
+	}
+	maximum, err := strconv.Atoi(matches[2])
+	if err != nil {
+		panic(err)
+	}
+	character := matches[3]
+	password := matches[4]
+
+	return PasswordEntry{minimum, maximum, character, password}
+}
+
 func part1(input []string) int {
 	valid := 0
 	for _, v := range input {
-		r := regexp.MustCompile(`(?P<Min>\d+)-(?P<Max>\d+) (?P<Char>.): (?P<Password>.+)`)
-		matches := r.FindStringSubmatch(v)
-		minimum, err := strconv.Atoi(matches[1])
-		if err != nil {
-			panic(err)
-		}
-		maximum, err := strconv.Atoi(matches[2])
-		if err != nil {
-			panic(err)
-		}
-		character := matches[3]
-		password := matches[4]
-
-		count := strings.Count(password, character)
-		if count >= minimum && count <= maximum {
+		entry := parseLine(v)
+		count := strings.Count(entry.Password, entry.Character)
+		if count >= entry.Minimum && count <= entry.Maximum {
 			valid += 1
 		}
 	}
@@ -64,19 +76,11 @@ func part1(input []string) int {
 func part2(input []string) int {
 	valid := 0
 	for _, v := range input {
-		// 3-4 h: hhxnh
-		r := regexp.MustCompile(`(?P<Pos1>\d+)-(?P<Pos2>\d+) (?P<Char>.): (?P<Password>.+)`)
-		matches := r.FindStringSubmatch(v)
-		position1, err := strconv.Atoi(matches[1])
-		if err != nil {
-			panic(err)
-		}
-		position2, err := strconv.Atoi(matches[2])
-		if err != nil {
-			panic(err)
-		}
-		character := matches[3][0]
-		password := matches[4]
+		entry := parseLine(v)
+		position1 := entry.Minimum
+		position2 := entry.Maximum
+		character := entry.Character[0]
+		password := entry.Password
 
 		if (password[position1-1] == character && password[position2-1] != character) ||
 			(password[position1-1] != character && password[position2-1] == character) {
@@ -92,7 +96,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Print("Part 1: ")
-	fmt.Println(part1(lines)) // 63616
+	fmt.Println(part1(lines)) // 378
 	fmt.Print("Part 2: ")
-	fmt.Println(part2(lines)) // 67877784
+	fmt.Println(part2(lines)) // 280
 }
