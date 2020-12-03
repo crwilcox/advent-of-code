@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -23,12 +22,10 @@ func readFileToArray(path string) ([]int, error) {
 	defer file.Close()
 
 	var lines []int
-	reader := bufio.NewReader(file)
-	for {
-		line, err := reader.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
 		i, err := strconv.Atoi(strings.TrimSpace(line))
 		if err != nil {
 			return nil, err
@@ -37,6 +34,9 @@ func readFileToArray(path string) ([]int, error) {
 		lines = append(lines, i)
 	}
 
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
 	return lines, nil
 }
 

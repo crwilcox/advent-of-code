@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,12 +21,10 @@ func readFileToArray(path string) ([][]byte, error) {
 	defer file.Close()
 
 	var lines [][]byte
-	reader := bufio.NewReader(file)
-	for {
-		line, err := reader.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
 		line = strings.TrimSpace(line)
 
 		var runeSlice = []byte(line)
@@ -36,6 +33,9 @@ func readFileToArray(path string) ([][]byte, error) {
 		}
 	}
 
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
 	return lines, nil
 }
 
