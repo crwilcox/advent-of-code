@@ -92,7 +92,12 @@ func part2(groupSets []group) int {
 }
 
 func main() {
-	groupSets, err := readFileToSets("/2020/aoc06/input")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:", os.Args[0], "path/to/input/file")
+		return
+	}
+	filePath := os.Args[1]
+	groupSets, err := readFileToSets(filePath)
 	if err != nil {
 		panic(err)
 	}

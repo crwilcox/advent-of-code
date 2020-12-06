@@ -73,7 +73,12 @@ func part2(input []int) int {
 }
 
 func main() {
-	lines, err := readFileToArray("/2020/aoc01/input")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:", os.Args[0], "path/to/input/file")
+		return
+	}
+	filePath := os.Args[1]
+	lines, err := readFileToArray(filePath)
 	if err != nil {
 		panic(err)
 	}

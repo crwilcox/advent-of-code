@@ -137,7 +137,12 @@ func part2(input []string) int {
 }
 
 func main() {
-	seatStrings, err := readFile("/2020/aoc05/input")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:", os.Args[0], "path/to/input/file")
+		return
+	}
+	filePath := os.Args[1]
+	seatStrings, err := readFile(filePath)
 	if err != nil {
 		panic(err)
 	}

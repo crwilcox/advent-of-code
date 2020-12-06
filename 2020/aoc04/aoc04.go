@@ -211,7 +211,12 @@ func part2(input []passport) int {
 }
 
 func main() {
-	passports, err := readFileToPassports("/2020/aoc04/input")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage:", os.Args[0], "path/to/input/file")
+		return
+	}
+	filePath := os.Args[1]
+	passports, err := readFileToPassports(filePath)
 	if err != nil {
 		panic(err)
 	}
