@@ -38,7 +38,6 @@ func (p passport) isSet() bool {
 // pid (Passport ID) - a nine-digit number, including leading zeroes.
 // cid (Country ID) - ignored, missing or not.
 func (p passport) isValid() bool {
-
 	if !p.isSet() {
 		return false
 	}
