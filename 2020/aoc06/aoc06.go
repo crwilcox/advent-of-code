@@ -88,7 +88,6 @@ func part2(groupSets []group) int {
 		}
 	}
 	return sum
-
 }
 
 func main() {

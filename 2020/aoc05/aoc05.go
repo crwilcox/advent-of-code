@@ -110,17 +110,9 @@ func part1(input []string) int {
 // Given an array of seat IDs, identify which seat is missing, the seat missing
 // will not be the very first or very last seat.
 func part2(input []string) int {
-	maxUID := -1
-	minUID := -1
 	var allSeatIds []int
 	for _, seatString := range input {
 		uid := decodeSeatFromBoardingPass(seatString)
-		if uid > maxUID {
-			maxUID = uid
-		}
-		if uid < minUID || minUID < 0 {
-			minUID = uid
-		}
 		allSeatIds = append(allSeatIds, uid)
 	}
 
