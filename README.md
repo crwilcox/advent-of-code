@@ -1,4 +1,6 @@
-crwilcox's Advent of Code Repository
+# Advent of Code
 
-This is a repository containing solutions for the 2020 Advent of Code
-(https://adventofcode.com/).
+Ho Ho Go!
+
+This is a repository containing solutions for the
+[Advent of Code](https://adventofcode.com/), authored in Go.
