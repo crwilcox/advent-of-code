@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -88,24 +89,32 @@ func maskInputAndSumStoredValuesV1(lines []string) int {
 // Given a bitmask contianing 'X' return all possible bitmasks.
 // an "X" represents both a 1 and a 0 state
 func expandBitmasks(bitmask string) []string {
-	result := ""
-	for k, v := range bitmask {
-		if v != 'X' {
-			result += string(v)
-		} else {
-			// if we find an X, it is floating
-			// calculate the mask as both a 0 and a 1
-			arr := []byte(bitmask)
-			arr[k] = '0'
-			expansionsZero := expandBitmasks(string(arr))
-
-			arr[k] = '1'
-			expansionsOne := expandBitmasks(string(arr))
-			return append(expansionsOne, expansionsZero...)
+	bitmasks := make([]string, 0)
+	// create an array containing offsets in address to floating bits.
+	floating := make([]int, 0)
+	for i, v := range bitmask {
+		if v == 'X' {
+			floating = append(floating, i)
 		}
 	}
 
-	return []string{result}
+	// loop over the different 0/1 combinations, assigning the X to the
+	// corresponding values.
+	loopMax := int(math.Pow(2, float64(len(floating))))
+	for i := 0; i < loopMax; i++ {
+		j := i
+		maskCopy := []byte(bitmask)
+		for _, v := range floating {
+			if j&0x1 == 1 {
+				maskCopy[v] = '1'
+			} else {
+				maskCopy[v] = '0'
+			}
+			j = j >> 1
+		}
+		bitmasks = append(bitmasks, string(maskCopy))
+	}
+	return bitmasks
 }
 
 // Given a value (memory address), Apply the rules for bitmasks for part 2,
