@@ -86,10 +86,12 @@ func NewTicketDataFromFile(path string) TicketData {
 func (td TicketData) findTicketInvalidInputs(ticket []int) int {
 	for _, ticketNumber := range ticket {
 		inRange := false
+	RulesLoop:
 		for _, rule := range td.rules {
 			for _, r := range rule.ranges {
 				if r[0] <= ticketNumber && ticketNumber <= r[1] {
 					inRange = true
+					break RulesLoop
 				}
 			}
 		}
@@ -122,12 +124,12 @@ func (td TicketData) getValidNearbyTickets() [][]int {
 	return valid
 }
 
-func (td TicketData) getRuleNamesForNumber(number int) []string {
-	res := make([]string, 0)
+func (td TicketData) getRuleNamesForNumber(number int) map[string]bool {
+	res := make(map[string]bool)
 	for _, rule := range td.rules {
 		for _, r := range rule.ranges {
 			if r[0] <= number && number <= r[1] {
-				res = append(res, rule.name)
+				res[rule.name] = true
 			}
 		}
 	}
@@ -136,15 +138,15 @@ func (td TicketData) getRuleNamesForNumber(number int) []string {
 
 func (td TicketData) decipherFieldMapping() []string {
 	// Find all possible fields for each ticket.
-	ticketsAsPossibleFields := make([][][]string, 0)
+	ticketsAsPossibleFieldsMap := make([][]map[string]bool, 0)
 	for _, ticket := range td.nearbyTickets {
-		mapping := make([][]string, 0)
+		mapping := make([]map[string]bool, 0)
 		for _, n := range ticket {
-			possibleNames := td.getRuleNamesForNumber(n)
-			mapping = append(mapping, possibleNames)
+			possibleNameMap := td.getRuleNamesForNumber(n)
+			mapping = append(mapping, possibleNameMap)
 		}
 
-		ticketsAsPossibleFields = append(ticketsAsPossibleFields, mapping)
+		ticketsAsPossibleFieldsMap = append(ticketsAsPossibleFieldsMap, mapping)
 	}
 
 	// populate a list of mappings that remain to be used. Once a column
@@ -154,36 +156,33 @@ func (td TicketData) decipherFieldMapping() []string {
 		remainingMappings[v.name] = true
 	}
 
-	// Initialize ticket possibilities to be unrestricted.
+	// Initialize each column on each ticket to be any ticket value type
 	ticketValueCount := len(td.ticket)
-	possibleMappings := make([][]string, ticketValueCount)
+	possibleMappings := make([]map[string]bool, ticketValueCount)
 	for i := 0; i < ticketValueCount; i++ {
-		possibleMappings[i] = make([]string, len(td.rules))
+		possibleMappings[i] = make(map[string]bool, len(td.rules))
 		for j := 0; j < len(td.rules); j++ {
-			possibleMappings[i][j] = td.rules[j].name
+			possibleMappings[i][td.rules[j].name] = true
 		}
 	}
 
-	// While it is the case we have remaining mappings, keep looping over
-	// all tickets. This will reduce to 1 per column.
+	// While it is the case we have remaining rules to map to, keep looping
+	// over all tickets. This will reduce to 1 per column.
 	for len(remainingMappings) > 0 {
 		// for each ticket, compare the running possible mapping to this ticket's
 		// possibilities. Take the intersection as we go.
-		for _, ticket := range ticketsAsPossibleFields {
+		for _, ticket := range ticketsAsPossibleFieldsMap {
 			for index, fieldPossibilities := range ticket {
 				if len(possibleMappings[index]) > 1 {
 					inter := intersection(fieldPossibilities, possibleMappings[index])
-					remainingMappingsArr := make([]string, 0)
-					for v := range remainingMappings {
-						remainingMappingsArr = append(remainingMappingsArr, v)
-					}
-
-					inter = intersection(inter, remainingMappingsArr)
+					inter = intersection(remainingMappings, inter)
 					possibleMappings[index] = inter
 					if len(inter) == 1 {
 						// we have found a particular columns value, this field name
 						// should be excluded from being available in the future
-						delete(remainingMappings, inter[0])
+						for k := range inter {
+							delete(remainingMappings, k)
+						}
 					}
 				}
 				//fmt.Print(index, possibleMappings[index])
@@ -194,7 +193,9 @@ func (td TicketData) decipherFieldMapping() []string {
 	// if all tickets match to a single field all is well.
 	ret := make([]string, 0)
 	for _, v := range possibleMappings {
-		ret = append(ret, v[0])
+		for k := range v {
+			ret = append(ret, k)
+		}
 	}
 	return ret
 }
@@ -206,7 +207,6 @@ func (td TicketData) multiplyDepartureFields() int {
 	mapping := td.decipherFieldMapping()
 
 	product := 1
-
 	for i, v := range mapping {
 		if strings.HasPrefix(v, "departure") {
 			product *= td.ticket[i]
@@ -232,7 +232,6 @@ func readFileToLines(path string) ([]string, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = strings.TrimSpace(line)
-
 		lines = append(lines, line)
 	}
 
@@ -243,16 +242,12 @@ func readFileToLines(path string) ([]string, error) {
 	return lines, nil
 }
 
-func intersection(a, b []string) []string {
-	intersect := make([]string, 0)
-	aMap := make(map[string]bool)
-	for _, entry := range a {
-		aMap[entry] = true
-	}
+func intersection(a, b map[string]bool) map[string]bool {
+	intersect := make(map[string]bool)
 
-	for _, entry := range b {
-		if _, ok := aMap[entry]; ok {
-			intersect = append(intersect, entry)
+	for entry := range b {
+		if _, ok := a[entry]; ok {
+			intersect[entry] = true
 		}
 	}
 
