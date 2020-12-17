@@ -8,7 +8,10 @@ import (
 	"strings"
 )
 
+// ACTIVE represented by '#' is an active square
 const ACTIVE = '#'
+
+// INACTIVE represented by '.' is an inactive square
 const INACTIVE = '.'
 
 func readFileToLines(path string) ([]string, error) {
@@ -28,7 +31,6 @@ func readFileToLines(path string) ([]string, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		line = strings.TrimSpace(line)
-
 		lines = append(lines, line)
 	}
 
@@ -39,8 +41,11 @@ func readFileToLines(path string) ([]string, error) {
 	return lines, nil
 }
 
+// Grid resresents an infinite hypercube matrix, represented by a sparse map
 type Grid struct {
-	grid map[int]map[int]map[int]rune
+	grid map[int]map[int]map[int]map[int]rune
+	wMax int
+	wMin int
 	zMax int
 	zMin int
 	yMax int
@@ -49,9 +54,12 @@ type Grid struct {
 	xMin int
 }
 
+// NewGrid initializes the 4D grid.
 func NewGrid() Grid {
 	g := Grid{}
-	g.grid = make(map[int]map[int]map[int]rune)
+	g.grid = make(map[int]map[int]map[int]map[int]rune)
+	g.wMax = 0
+	g.wMin = 0
 	g.zMax = 0
 	g.zMin = 0
 	g.yMax = 0
@@ -62,29 +70,34 @@ func NewGrid() Grid {
 	return g
 }
 
-func (g Grid) setPosition(z int, y int, x int, val rune) {
-	if _, ok := g.grid[z]; !ok {
-		g.grid[z] = make(map[int]map[int]rune)
+func (g Grid) setPosition(w int, z int, y int, x int, val rune) {
+	if _, ok := g.grid[w]; !ok {
+		g.grid[w] = make(map[int]map[int]map[int]rune)
 	}
-	if _, ok := g.grid[z][y]; !ok {
-		g.grid[z][y] = make(map[int]rune)
-
+	if _, ok := g.grid[w][z]; !ok {
+		g.grid[w][z] = make(map[int]map[int]rune)
 	}
-	g.grid[z][y][x] = val
+	if _, ok := g.grid[w][z][y]; !ok {
+		g.grid[w][z][y] = make(map[int]rune)
+	}
+	g.grid[w][z][y][x] = val
 }
 
-func (g Grid) getPosition(z int, y int, x int) rune {
-	if _, ok := g.grid[z]; !ok {
+func (g Grid) getPosition(w int, z int, y int, x int) rune {
+	if _, ok := g.grid[w]; !ok {
 		return INACTIVE
 	}
-	if _, ok := g.grid[z][y]; !ok {
+	if _, ok := g.grid[w][z]; !ok {
 		return INACTIVE
 	}
-	if _, ok := g.grid[z][y][x]; !ok {
+	if _, ok := g.grid[w][z][y]; !ok {
+		return INACTIVE
+	}
+	if _, ok := g.grid[w][z][y][x]; !ok {
 		return INACTIVE
 	}
 
-	return g.grid[z][y][x]
+	return g.grid[w][z][y][x]
 }
 
 // During a cycle, all cubes simultaneously change their state according to the following rules:
@@ -92,18 +105,19 @@ func (g Grid) getPosition(z int, y int, x int) rune {
 // active. Otherwise, the cube becomes inactive.
 // If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active.
 // Otherwise, the cube remains inactive.
-func (g Grid) calculateSquareNextState(z int, y int, x int) rune {
+func (g Grid) calculateSquareNextState(w int, z int, y int, x int) rune {
 	// count neighbors
 	activeNeighbors := 0
-
-	for _, zOff := range []int{-1, 0, 1} {
-		for _, yOff := range []int{-1, 0, 1} {
-			for _, xOff := range []int{-1, 0, 1} {
-				// ignore the current coordinate
-				if zOff != 0 || yOff != 0 || xOff != 0 {
-					otherSquare := g.getPosition(z+zOff, y+yOff, x+xOff)
-					if otherSquare == ACTIVE {
-						activeNeighbors++
+	for _, wOff := range []int{-1, 0, 1} {
+		for _, zOff := range []int{-1, 0, 1} {
+			for _, yOff := range []int{-1, 0, 1} {
+				for _, xOff := range []int{-1, 0, 1} {
+					// ignore the current coordinate
+					if wOff != 0 || zOff != 0 || yOff != 0 || xOff != 0 {
+						otherSquare := g.getPosition(w+wOff, z+zOff, y+yOff, x+xOff)
+						if otherSquare == ACTIVE {
+							activeNeighbors++
+						}
 					}
 				}
 			}
@@ -115,7 +129,7 @@ func (g Grid) calculateSquareNextState(z int, y int, x int) rune {
 	// the cube remains active. Otherwise, the cube becomes inactive.
 	// If a cube is inactive but exactly 3 of its neighbors are active, the
 	// cube becomes active. Otherwise, the cube remains inactive.
-	currentSquare := g.getPosition(z, y, x)
+	currentSquare := g.getPosition(w, z, y, x)
 	if currentSquare == ACTIVE && (activeNeighbors == 2 || activeNeighbors == 3) {
 		return ACTIVE
 	} else if currentSquare == INACTIVE && activeNeighbors == 3 {
@@ -125,21 +139,20 @@ func (g Grid) calculateSquareNextState(z int, y int, x int) rune {
 }
 
 func (g Grid) printGrid() {
-
-	for z := g.zMin; z <= g.zMax; z++ {
-		fmt.Println("z =", z)
-
-		for y := g.yMin; y <= g.yMax; y++ {
-			for x := g.xMin; x <= g.xMax; x++ {
-				val := g.getPosition(z, y, x)
-				if val == INACTIVE {
-					fmt.Print(".")
-				} else {
-					fmt.Print("#")
+	for w := g.wMin; w <= g.wMax; w++ {
+		for z := g.zMin; z <= g.zMax; z++ {
+			fmt.Println("z =", z, "w =", w)
+			for y := g.yMin; y <= g.yMax; y++ {
+				for x := g.xMin; x <= g.xMax; x++ {
+					val := g.getPosition(z, y, x, w)
+					if val == INACTIVE {
+						fmt.Print(".")
+					} else {
+						fmt.Print("#")
+					}
 				}
+				fmt.Println()
 			}
-			fmt.Println()
-
 		}
 	}
 }
@@ -152,48 +165,60 @@ func (g Grid) cycle() Grid {
 	nextState.yMin = g.yMin
 	nextState.xMax = g.xMax
 	nextState.xMin = g.xMin
+	nextState.wMin = g.wMin
+	nextState.wMax = g.wMax
+	for w := nextState.wMin - 1; w <= nextState.wMax+1; w++ {
+		for z := nextState.zMin - 1; z <= nextState.zMax+1; z++ {
+			for y := nextState.yMin - 1; y <= nextState.yMax+1; y++ {
+				for x := nextState.xMin - 1; x <= nextState.xMax+1; x++ {
+					// look at the current state. compute the state, set its state
+					// in the new grid
+					nextSquareState := g.calculateSquareNextState(w, z, y, x)
+					if nextSquareState == ACTIVE {
+						nextState.setPosition(w, z, y, x, nextSquareState)
 
-	for z := nextState.zMin - 1; z <= nextState.zMax+1; z++ {
-		for y := nextState.yMin - 1; y <= nextState.yMax+1; y++ {
-			for x := nextState.xMin - 1; x <= nextState.xMax+1; x++ {
-				// look at the current state. compute the state, set its state
-				// in the new grid
-				nextSquareState := g.calculateSquareNextState(z, y, x)
-				if nextSquareState == ACTIVE {
-					nextState.setPosition(z, y, x, nextSquareState)
+						// check if the bounds need updating also
+						if w < nextState.wMin {
+							nextState.wMin = w
+						} else if w > nextState.wMax {
+							nextState.wMax = w
+						}
 
-					// check if the bounds need updating also
-					if z < nextState.zMin {
-						nextState.zMin = z
-					} else if z > nextState.zMax {
-						nextState.zMax = z
-					}
+						if z < nextState.zMin {
+							nextState.zMin = z
+						} else if z > nextState.zMax {
+							nextState.zMax = z
+						}
 
-					if y < nextState.yMin {
-						nextState.yMin = y
-					} else if y > nextState.yMax {
-						nextState.yMax = y
-					}
+						if y < nextState.yMin {
+							nextState.yMin = y
+						} else if y > nextState.yMax {
+							nextState.yMax = y
+						}
 
-					if x < nextState.xMin {
-						nextState.xMin = x
-					} else if x > nextState.xMax {
-						nextState.xMax = x
+						if x < nextState.xMin {
+							nextState.xMin = x
+						} else if x > nextState.xMax {
+							nextState.xMax = x
+						}
 					}
 				}
 			}
 		}
 	}
+
 	return nextState
 }
 
 func (g Grid) getActiveCount() int {
 	count := 0
-	for _, v := range g.grid {
-		for _, w := range v {
-			for _, val := range w {
-				if val == ACTIVE {
-					count++
+	for _, w := range g.grid {
+		for _, z := range w {
+			for _, y := range z {
+				for _, x := range y {
+					if x == ACTIVE {
+						count++
+					}
 				}
 			}
 		}
@@ -213,32 +238,24 @@ func main() {
 	}
 
 	grid := NewGrid()
-	grid.zMax = 0
-	grid.zMin = 0
-	grid.yMin = 0
-	grid.xMin = 0
 	for y, v := range lines {
 		grid.yMax = y
 
-		for x, w := range v {
+		for x, val := range v {
 			grid.xMax = x
-			grid.setPosition(0, y, x, w)
+			grid.setPosition(0, 0, y, x, val)
 		}
 	}
 
-	fmt.Println("🎄 Part 1 🎁: ") // Answer: 207
-	// six cycles and return count
-	fmt.Println("initial", grid.getActiveCount())
+	fmt.Println("🎄 Part 1 🎁: 207") // Answer: 207
 
+	fmt.Println("🎄 Part 2 🎁: ") // Answer: 2308
+
+	// six cycles and return count
 	for i := 0; i < 6; i++ {
 		grid = grid.cycle()
-		fmt.Println("After", i+1, "cycle:")
-		fmt.Println("count:", grid.getActiveCount())
-		grid.printGrid()
-
-		fmt.Println()
+		//fmt.Println("After", i+1, "cycle:")
+		//grid.printGrid()
 	}
 	fmt.Println(grid.getActiveCount())
-
-	fmt.Println("🎄 Part 2 🎁: ") // Answer:
 }
