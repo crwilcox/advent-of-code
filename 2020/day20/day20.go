@@ -198,7 +198,6 @@ func arrangeTilesToGrid(tiles map[int]Tile) [][]Tile {
 			break
 		}
 	}
-	fmt.Println("STARTING TILE:", startingTileNo)
 
 	// now that we have the first element, we can begin to place the other elements,
 	// row by row. find based on the tile to the left, what tile this could be.
@@ -519,6 +518,7 @@ func findMonsters(image [][]byte) int {
 		}
 	}
 
+	// fmt.Println("Grid:")
 	// for _, v := range image {
 	// 	fmt.Println(string(v))
 	// }
@@ -581,6 +581,6 @@ func main() {
 	// once constructed each tile's edges need to be carved off the tile
 	combinedImage := removeEdgesFromTilesAndMerge(tileGrid)
 	// Now, search for monsters and determine water roughness
-	roughWater := findMonsters(combinedImage)
+	roughWater := findMonstersAndCountSquares(combinedImage)
 	fmt.Println("🎄 Part 2 🎁:", roughWater) // Answer:
 }
