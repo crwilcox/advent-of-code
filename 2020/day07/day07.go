@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 type bag struct {
@@ -15,23 +15,13 @@ type bag struct {
 }
 
 func readFileToSets(path string) (map[string][]bag, error) {
-	rootDir, err := os.Getwd()
+	lines, err := utils.ReadFileToLines(path)
 	if err != nil {
 		return nil, err
 	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
 
 	bags := make(map[string][]bag)
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
+	for _, line := range lines {
 		// Example Lines:
 		// vibrant plum bags contain 5 faded blue bags, 1 dotted black bag.
 		// faded blue bags contain no other bags.
@@ -59,10 +49,6 @@ func readFileToSets(path string) (map[string][]bag, error) {
 				}
 			}
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	return bags, nil

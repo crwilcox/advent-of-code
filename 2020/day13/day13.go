@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// BusSchedule struct
 type BusSchedule struct {
 	earliestDeparture int
 	buses             []int

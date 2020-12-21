@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 const (
@@ -13,33 +12,6 @@ const (
 	empty    = byte('L')
 	occupied = byte('#')
 )
-
-func readFileToGrid(path string) ([][]byte, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	grid := [][]byte{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-		grid = append(grid, []byte(line))
-
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return grid, nil
-}
 
 // helper function to display the grid
 func printGrid(grid [][]byte) {
@@ -175,7 +147,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	grid, err := readFileToGrid(filePath)
+	grid, err := utils.ReadFileTo2DByteArray(filePath)
 	if err != nil {
 		panic(err)
 	}
@@ -189,7 +161,7 @@ func main() {
 	fmt.Println(countOccupiedSeats(grid))
 
 	fmt.Print("Part 2: ") // Answer: 1897
-	grid, err = readFileToGrid(filePath)
+	grid, err = utils.ReadFileTo2DByteArray(filePath)
 	if err != nil {
 		panic(err)
 	}

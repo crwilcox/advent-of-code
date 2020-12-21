@@ -1,14 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
+// Move struct
 type Move struct {
 	direction string
 	value     int
@@ -22,21 +22,13 @@ func abs(val int) int {
 }
 
 func readFileToMoves(path string) ([]Move, error) {
-	rootDir, err := os.Getwd()
+	lines, err := utils.ReadFileToLines(path)
 	if err != nil {
 		return nil, err
 	}
 
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
 	moves := make([]Move, 0)
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
+	for _, line := range lines {
 
 		m := Move{}
 		m.direction = string(line[0])
@@ -45,10 +37,6 @@ func readFileToMoves(path string) ([]Move, error) {
 			return nil, err
 		}
 		moves = append(moves, m)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	return moves, nil

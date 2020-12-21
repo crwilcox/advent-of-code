@@ -1,14 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 type passport struct {
@@ -123,24 +123,14 @@ func (p passport) isValid() bool {
 }
 
 func readFileToPassports(path string) ([]passport, error) {
-	rootDir, err := os.Getwd()
+	lines, err := utils.ReadFileToLines(path)
 	if err != nil {
 		return nil, err
 	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
 	var passports []passport
-	scanner := bufio.NewScanner(file)
-	currPassport := passport{}
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
 
+	currPassport := passport{}
+	for _, line := range lines {
 		// if there is a blankline, that should be considered the end of
 		// a passport entry
 		if len(line) <= 0 {
@@ -174,10 +164,6 @@ func readFileToPassports(path string) ([]passport, error) {
 				}
 			}
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	// save the passport we were building at the end of file

@@ -1,42 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"math"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFileToLines(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
-		lines = append(lines, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return lines, nil
-}
 
 // Apply a bitmask to a provided int. X indicates to do nothing, 0 and 1
 // each result in that position getting a 0 or 1 respectively
@@ -178,7 +150,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToLines(filePath)
+	lines, err := utils.ReadFileToLines(filePath)
 	if err != nil {
 		panic(err)
 	}

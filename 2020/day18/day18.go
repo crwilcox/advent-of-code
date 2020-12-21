@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 // Stack wraps a slice to act as a stack
@@ -27,34 +27,6 @@ func (s *Stack) pop() string {
 
 func (s *Stack) isEmpty() bool {
 	return len(s.stack) == 0
-}
-
-func readFileToLines(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
-		lines = append(lines, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return lines, nil
 }
 
 func leftRightMath(input string) int {
@@ -159,7 +131,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToLines(filePath)
+	lines, err := utils.ReadFileToLines(filePath)
 	if err != nil {
 		panic(err)
 	}

@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 // ACTIVE represented by '#' is an active square
@@ -13,33 +12,6 @@ const ACTIVE = '#'
 
 // INACTIVE represented by '.' is an inactive square
 const INACTIVE = '.'
-
-func readFileToLines(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-		lines = append(lines, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return lines, nil
-}
 
 // Grid resresents an infinite hypercube matrix, represented by a sparse map
 type Grid struct {
@@ -232,7 +204,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToLines(filePath)
+	lines, err := utils.ReadFileToLines(filePath)
 	if err != nil {
 		panic(err)
 	}

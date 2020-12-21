@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 type PasswordEntry struct {
@@ -15,31 +15,6 @@ type PasswordEntry struct {
 	Maximum   int
 	Character string
 	Password  string
-}
-
-func readFileToArray(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		lines = append(lines, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	return lines, nil
 }
 
 func parseLine(line string) PasswordEntry {
@@ -94,7 +69,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToArray(filePath)
+	lines, err := utils.ReadFileToLines(filePath)
 	if err != nil {
 		panic(err)
 	}

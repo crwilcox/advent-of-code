@@ -1,45 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
-	"strconv"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFileToJoltages(path string) ([]int, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	joltages := []int{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
-		i, err := strconv.Atoi(line)
-		if err != nil {
-			return nil, err
-		}
-		joltages = append(joltages, i)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return joltages, nil
-}
 
 // Initial Approach to Part 2, while this will *work* it takes far too
 // long for a real dataset.
@@ -94,7 +61,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	joltages, err := readFileToJoltages(filePath)
+	joltages, err := utils.ReadFileToIntArray(filePath)
 	if err != nil {
 		panic(err)
 	}
@@ -116,5 +83,5 @@ func main() {
 	// Initial approach, turned out to be far too slow
 	// fmt.Println(validChains(joltages))
 	// Different approach, don't actually explore the 'graph'
-	fmt.Println(determinePotentialJoltageSequences(joltages))
+	fmt.Println(determinePotentialJoltageSequences(joltages)) // 4628074479616
 }

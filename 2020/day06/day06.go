@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 type group struct {
@@ -16,25 +15,16 @@ type group struct {
 // Given custom declaration forms, take groups, collapse to a set with counts
 // of responses per group tallied.
 func readFileToSets(path string) ([]group, error) {
-	rootDir, err := os.Getwd()
+	lines, err := utils.ReadFileToLines(path)
 	if err != nil {
 		return nil, err
 	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
 
 	var groupSets []group
 	currGroup := group{}
 	currGroup.answers = make(map[rune]int)
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
+	for _, line := range lines {
 
 		// if there is a blankline, that should be considered the end of a group
 		if len(line) <= 0 {
@@ -52,10 +42,6 @@ func readFileToSets(path string) ([]group, error) {
 				}
 			}
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	// On the final iteration, we will not get an empty entry, commit here.

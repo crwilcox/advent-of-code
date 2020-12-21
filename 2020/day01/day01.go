@@ -1,44 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFileToArray(path string) ([]int, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []int
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		i, err := strconv.Atoi(strings.TrimSpace(line))
-		if err != nil {
-			return nil, err
-		}
-
-		lines = append(lines, i)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	return lines, nil
-}
 
 // Given an input array, find the product of the two values
 // within that sum to 2020
@@ -78,7 +45,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToArray(filePath)
+	lines, err := utils.ReadFileToIntArray(filePath)
 	if err != nil {
 		panic(err)
 	}

@@ -1,43 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFileToArray(path string) ([][]byte, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines [][]byte
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		line = strings.TrimSpace(line)
-
-		var runeSlice = []byte(line)
-		if len(line) > 0 {
-			lines = append(lines, runeSlice)
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	return lines, nil
-}
 
 // Determine the number of trees you would encounter if you traversed it with
 // the slope or right and down.
@@ -87,7 +55,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	lines, err := readFileToArray(filePath)
+	lines, err := utils.ReadFileTo2DByteArray(filePath)
 	if err != nil {
 		panic(err)
 	}

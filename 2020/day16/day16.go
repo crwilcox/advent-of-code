@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 // Rule contains a name and ranges, each which have a lower and upper bound
@@ -27,7 +27,7 @@ type TicketData struct {
 
 // NewTicketDataFromFile populates a TicketData from a filepath
 func NewTicketDataFromFile(path string) TicketData {
-	lines, _ := readFileToLines(path)
+	lines, _ := utils.ReadFileToLines(path)
 	td := TicketData{}
 	td.rules = make([]Rule, 0)
 	td.nearbyTickets = make([][]int, 0)
@@ -213,33 +213,6 @@ func (td TicketData) multiplyDepartureFields() int {
 		}
 	}
 	return product
-}
-
-func readFileToLines(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-		lines = append(lines, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return lines, nil
 }
 
 func intersection(a, b map[string]bool) map[string]bool {

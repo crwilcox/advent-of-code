@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
 
 type instruction struct {
@@ -16,22 +16,13 @@ type instruction struct {
 }
 
 func readFileToInstructions(path string) ([]instruction, error) {
-	rootDir, err := os.Getwd()
+	lines, err := utils.ReadFileToLines(path)
 	if err != nil {
 		return nil, err
 	}
 
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
 	instructions := []instruction{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
+	for _, line := range lines {
 		split := strings.Split(line, " ")
 		i := instruction{}
 		i.name = split[0]
@@ -40,10 +31,6 @@ func readFileToInstructions(path string) ([]instruction, error) {
 			return nil, err
 		}
 		instructions = append(instructions, i)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	return instructions, nil

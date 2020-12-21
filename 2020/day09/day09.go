@@ -1,44 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFileToInts(path string) ([]int, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	ints := []int{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
-		i, err := strconv.Atoi(line)
-		if err != nil {
-			return nil, err
-		}
-		ints = append(ints, i)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return ints, nil
-}
 
 // Given an array, find the first entry that does not satisfy the constraint
 // in the given previous entries, where two values cannot be summed to the
@@ -105,7 +72,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	ints, err := readFileToInts(filePath)
+	ints, err := utils.ReadFileToIntArray(filePath)
 	if err != nil {
 		panic(err)
 	}

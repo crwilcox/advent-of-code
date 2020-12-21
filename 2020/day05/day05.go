@@ -1,41 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
-	"strings"
+
+	"github.com/crwilcox/advent-of-code/2020/utils"
 )
-
-func readFile(path string) ([]string, error) {
-	rootDir, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := os.Open(filepath.Join(rootDir, path))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var seatIds []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-
-		seatIds = append(seatIds, line)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return seatIds, nil
-}
 
 // Given a boarding pass string, decode that to the unique seat ID
 // For example:FBFBBFFRLR
@@ -134,7 +105,7 @@ func main() {
 		return
 	}
 	filePath := os.Args[1]
-	seatStrings, err := readFile(filePath)
+	seatStrings, err := utils.ReadFileToLines(filePath)
 	if err != nil {
 		panic(err)
 	}
