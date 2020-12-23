@@ -42,7 +42,7 @@ func countNonAllergenAppearances(items []Item) int {
 }
 
 // Part 2:
-// Identifies allergesn
+// Identifies allergens
 // Returns map of ingredient to allergen
 func identifyAllergens(items []Item) map[string]string {
 	allergenToPotential := make(map[string][]string)
