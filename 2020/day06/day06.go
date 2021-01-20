@@ -35,11 +35,7 @@ func readFileToSets(path string) ([]group, error) {
 			currGroup.size++
 			// parse an individual response adding responses to the group set
 			for _, v := range line[:] {
-				if val, ok := currGroup.answers[v]; ok {
-					currGroup.answers[v] = val + 1
-				} else {
-					currGroup.answers[v] = 1
-				}
+				currGroup.answers[v]++
 			}
 		}
 	}

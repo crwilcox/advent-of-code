@@ -49,11 +49,7 @@ func identifyAllergens(items []Item) map[string]string {
 
 	for _, item := range items {
 		for _, allergen := range item.allergens {
-			if _, ok := allergenToPotential[allergen]; ok {
-				allergenToPotential[allergen] = append(allergenToPotential[allergen], item.ingredients...)
-			} else {
-				allergenToPotential[allergen] = item.ingredients
-			}
+			allergenToPotential[allergen] = append(allergenToPotential[allergen], item.ingredients...)
 		}
 	}
 

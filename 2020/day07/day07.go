@@ -42,11 +42,7 @@ func readFileToSets(path string) (map[string][]bag, error) {
 					return nil, err
 				}
 				b.name = v[2:]
-				if _, ok := bags[bagName]; ok {
-					bags[bagName] = append(bags[bagName], b)
-				} else {
-					bags[bagName] = []bag{b}
-				}
+				bags[bagName] = append(bags[bagName], b)
 			}
 		}
 	}
