@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Apply a bitmask to a provided int. X indicates to do nothing, 0 and 1

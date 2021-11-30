@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Stack wraps a slice to act as a stack

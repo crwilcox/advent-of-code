@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 func playCombat(player1 []int, player2 []int) int {

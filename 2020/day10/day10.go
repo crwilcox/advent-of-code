@@ -5,7 +5,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Initial Approach to Part 2, while this will *work* it takes far too

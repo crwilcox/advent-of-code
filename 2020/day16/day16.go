@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Rule contains a name and ranges, each which have a lower and upper bound

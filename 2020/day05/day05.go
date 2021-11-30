@@ -5,7 +5,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Given a boarding pass string, decode that to the unique seat ID

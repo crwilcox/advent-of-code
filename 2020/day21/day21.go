@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	utils "github.com/crwilcox/advent-of-code/2020/utils"
+	utils "github.com/crwilcox/advent-of-code/utils"
 )
 
 // Item struct

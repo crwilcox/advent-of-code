@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/crwilcox/advent-of-code/2020/utils"
+	"github.com/crwilcox/advent-of-code/utils"
 )
 
 // Given an array, find the first entry that does not satisfy the constraint
