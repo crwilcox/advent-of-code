@@ -145,3 +145,39 @@ func ReadFileTo2DByteArray(path string) ([][]byte, error) {
 	}
 	return lines, nil
 }
+
+// ReadFileTo2DByteArray takes a path and outputs the contents to a [][]byte array.
+func ReadFileTo2DIntArray(path string) ([][]int, error) {
+	rootDir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	file, err := os.Open(filepath.Join(rootDir, path))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var lines [][]int
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		row := make([]int, 0)
+		for _, c := range strings.TrimSpace(line) {
+			i, err := strconv.Atoi(string(c))
+			if err != nil {
+				return nil, err
+			}
+			row = append(row, i)
+		}
+
+		lines = append(lines, row)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return lines, nil
+}
