@@ -19,4 +19,4 @@ with open("input") as input:
         print(number)
         sum += number
 
-    print(sum)
+print(f"🎄 Part 1 🎁: {sum}")

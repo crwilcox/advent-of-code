@@ -39,4 +39,4 @@ with open("input") as input:
         number = first * 10 + last
         sum += number
 
-    print(sum)
+print(f"🎄 Part 2 🎁: {sum}")
