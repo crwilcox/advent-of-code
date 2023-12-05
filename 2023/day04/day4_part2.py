@@ -9,23 +9,25 @@ with open("input") as input:
         drawn = [c for c in drawn if c != ""]
         cards.append((card, drawn, 1))
 
+
 def wins_from_card(card, drawn):
-    matches=0
+    matches = 0
     for n in card:
         if n in drawn:
             print("MATCH:", n)
-            matches+=1
+            matches += 1
     return matches
+
 
 for idx, _ in enumerate(cards):
     card, drawn, copies = cards[idx]
     matches = wins_from_card(card, drawn)
 
     for i in range(matches):
-        if idx+i+1 < len(cards):
-            a, b, c = cards[idx+i+1]
+        if idx + i + 1 < len(cards):
+            a, b, c = cards[idx + i + 1]
             c += copies  # increase count of cards.
-            cards[idx+i+1] = (a,b,c)
+            cards[idx + i + 1] = (a, b, c)
 
 # Card Count
 sum = 0

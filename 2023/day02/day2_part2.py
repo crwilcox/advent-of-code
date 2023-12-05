@@ -1,6 +1,5 @@
-
 # Target Game
-game = {"red": 12, "green":13, "blue":14}
+game = {"red": 12, "green": 13, "blue": 14}
 
 sum = 0
 # with open("input") as input:
@@ -12,7 +11,7 @@ with open("input") as input:
         draws = s[1].split(";")
 
         possible = True
-        game = {"red": 0, "green":0, "blue":0}
+        game = {"red": 0, "green": 0, "blue": 0}
         for draw in draws:
             dice = draw.split(",")
             for die in dice:
@@ -22,7 +21,7 @@ with open("input") as input:
 
                 game[color] = max(game[color], count)
         powers = game["red"] * game["green"] * game["blue"]
-       
+
         sum += powers
 
 print(f"🎄 Part 2 🎁: {sum}")

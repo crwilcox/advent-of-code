@@ -9,15 +9,15 @@ with open("input") as input:
         drawn = [c for c in drawn if c != ""]
         print("CARD:", card)
         print("DRAWN:", drawn)
-        matches=0
+        matches = 0
         for n in card:
             if n in drawn:
                 print("MATCH:", n)
-                matches+=1
-        
+                matches += 1
+
         print(matches)
         if matches > 0:
-            total += pow(2, matches-1)
-        
+            total += pow(2, matches - 1)
+
 
 print(f"🎄 Part 1 🎁: {total}")

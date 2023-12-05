@@ -1,8 +1,17 @@
 with open("input") as input:
     sum = 0
     spelled = [
-        'zero', 'one', 'two', 'three', 'four',
-        'five', 'six', 'seven', 'eight', 'nine']
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "nine",
+    ]
     for x in input.readlines():
         first = 0
         last = 0
@@ -21,7 +30,7 @@ with open("input") as input:
                     break
 
         for k, i in enumerate(x[::-1]):
-            k = len(x)-k-1
+            k = len(x) - k - 1
             try:
                 last = int(i)
                 break
@@ -34,7 +43,6 @@ with open("input") as input:
                         break
                 if found:
                     break
-                
 
         number = first * 10 + last
         sum += number

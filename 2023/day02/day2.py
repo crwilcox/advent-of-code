@@ -1,6 +1,5 @@
-
 # Target Game
-game = {"red": 12, "green":13, "blue":14}
+game = {"red": 12, "green": 13, "blue": 14}
 
 sum = 0
 # with open("input") as input:
