@@ -3,8 +3,7 @@
 Ho Ho Go!
 
 This is a repository containing solutions for the
-[Advent of Code](https://adventofcode.com/), authored in Go.
-
+[Advent of Code](https://adventofcode.com/), authored in Go, and 2023 in Python, for old times sake.
 
 ![Coding](https://raw.githubusercontent.com/MariaLetta/free-gophers-pack/master/illustrations/christmas%20illustrations/svg/3.svg)
 
